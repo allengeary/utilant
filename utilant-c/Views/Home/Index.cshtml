@@ -1,0 +1,119 @@
+﻿
+<script>
+    function setPage(pageNumber) {
+        document.getElementById('page').value = pageNumber; 
+        document.getElementById('searchForm').submit();
+    }
+
+    function loadPhotos(albumId) {
+        $('#userDetail').empty();
+        $('#photoAlbum').load('/Home/GetPhotosPartial?albumId=' + albumId);
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#photoAlbum").offset().top
+        }, 500);
+    }
+
+    function loadUserDetail(userId) {
+        $('#photoAlbum').empty();
+        $('#userDetail').load('/Home/GetUserDetails?userId=' + userId);
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#userDetail").offset().top
+        }, 500);
+    }
+
+    function loadUserPosts(userId) {
+        console.log($('#postList').is(":visible") )
+        if ($('#postList').is(":visible")) {
+            $('#postList').collapse('hide');
+        } else {
+            $('#postData').load('/Home/GetPostsPartial?userId=' + userId);
+            $('#postList').collapse('show');
+        }
+        
+    }
+
+</script>
+<form asp-controller="Home" asp-action="Index" name="searchForm" id="searchForm">
+    <div class="form-group">
+        <label for="searchTitle">Album Title</label>
+        <input type="text" class="form-control" id="searchTitle" aria-describedby="titleHelp" placeholder="Album Title" name="searchTitle" value="@Model.searchAlbum">
+        <small id="titleHelp" class="form-text text-muted">Enter a portion of the album title</small>
+    </div>
+    <div class="form-group">
+        <label for="searchUser">User Name</label>
+        <input type="text" class="form-control" id="searchUser" placeholder="User Name" name="searchUser" aria-describedby="userHelp" value="@Model.searchUser">
+        <small id="userHelp" class="form-text text-muted">Enter a portion of the users name</small>
+    </div>
+    <input type="hidden" name="page" id="page" />
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+    <hr />
+    @if (Model.albumList != null)
+    {
+        <div class="text-center">
+            <ul class="pagination justify-content-center">
+                @for (int i = 1; i <= Model.albumList.PageCount; i++)
+                {
+                    if (i == Model.albumList.PageNumber)
+                    {
+                        <li class="page-item active"><a class="page-link" href="#">@i</a></li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><a class="page-link" onclick="setPage( @i )" href="#">@i</a></li>
+                    }
+
+                }
+            </ul>
+        </div>
+    }
+</form>
+    <hr />
+    <div class="row">
+        @if (Model.albumList != null)
+        {
+            @foreach (KeyValuePair<int, AlbumModel> entry in Model.albumList)
+            {
+                <div class="col-md-3">
+                    <div class="card">
+                        @if (entry.Value.photoList.Count > 0)
+                        {
+                            <img class="card-img-top" src="@entry.Value.photoList[0].thumbnailUrl" />
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title" onclick="loadPhotos( @entry.Value.id )">@entry.Value.title</h5>
+                            <div class="card-text">
+                                <div onclick="loadUserDetail( @entry.Value.user.id )"><b>User</b>: @entry.Value.user.name</div>
+                                <div><b>Email</b>: @entry.Value.user.email</div>
+                                <div><b>Phone</b>: @entry.Value.user.phone</div>
+                                <div>
+                                    <b>Address</b>: <br />
+                                    @entry.Value.user.address.street<br />
+                                    @entry.Value.user.address.city, @entry.Value.user.address.zipcode
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        }
+    </div>
+
+@if (Model != null && Model.errorMessage != null )
+{
+<div class="alert alert-danger" role="alert">
+    Error: @Model.errorMessage
+</div>
+}
+
+<div id="photoAlbum">
+
+</div>
+
+<div id="userDetail">
+
+</div>
+
+

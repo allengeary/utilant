@@ -1,0 +1,31 @@
+﻿<div class="card" style="border: 1px solid black; border-radius: 5px; padding: 10px; margin-top: 25px">
+    <div class="card-body">
+        <h5 class="card-title">@Model.name</h5>
+        <div class="card-text">
+            <div><b>User Name</b>: @Model.userName</div>
+            <div><b>Email</b>: @Model.email</div>
+            <div><b>Phone</b>: @Model.phone</div>
+            <div><b>Web Site</b>: @Model.website</div>
+            <div>
+                <b>Address</b>:  <br />
+                @Model.address.street<br />
+                @Model.address.city, @Model.address.zipcode
+            </div>
+            <div>
+                <b>Company</b>:  <br />
+                @Model.company.name<br />
+                <i>@Model.company.catchPhrase</i>
+                <p>@Model.company.bs</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a role="button" aria-expanded="false" onclick="loadUserPosts( @Model.id )" class="btn btn-primary">My Posts</a>
+    </div>
+</div>
+
+<div id="postList" style="border: 1px solid black; border-radius: 5px; padding: 10px; margin-top: 25px" class="collapse">
+    <div id="postData">
+    </div>
+</div>
+
